@@ -456,7 +456,7 @@ export default function GamesPage() {
                 >
                   Play Again
                 </Button>
-                <Link href="/choose-activity">
+                <Link href="/activity-choice">
                   <Button className="bg-purple-600 hover:bg-purple-700 text-white text-xl px-8 py-6 rounded-xl">
                     Choose Another Activity
                   </Button>
