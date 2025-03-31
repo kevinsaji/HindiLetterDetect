@@ -176,7 +176,7 @@ export default function BadgesPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
-            <Link href="/learn">
+            <Link href="/activity-choice">
               <Button variant="outline" size="icon" className="rounded-full bg-white shadow-md">
                 <ArrowLeft className="h-5 w-5" />
               </Button>

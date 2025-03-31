@@ -42,7 +42,7 @@ export default function AuthPage() {
       setIsLoading(false)
       // In a real app, you would validate credentials with your backend
       // For demo purposes, we'll just redirect to the learn page
-      router.push("/learn")
+      router.push("/activity-choice")
     }, 1500)
   }
 
@@ -62,7 +62,7 @@ export default function AuthPage() {
       setIsLoading(false)
       // In a real app, you would create the user account with your backend
       // For demo purposes, we'll just redirect to the learn page
-      router.push("/learn")
+      router.push("/activity-choice")
     }, 1500)
   }
 

@@ -363,9 +363,16 @@ export default function HindiLearning() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
+                <Link href="/activity-choice" className="flex items-center w-full">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Activities</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
                 <Link href="/" className="flex items-center w-full">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Log Out</span>
+                  <span>Log-Out</span>
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
