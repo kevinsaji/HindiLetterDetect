@@ -647,7 +647,7 @@ export default function HomePage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="/learn">
+            <Link href="/auth">
               <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xl px-10 py-8 rounded-2xl shadow-lg border-2 border-amber-300">
                 Start Learning
               </Button>
