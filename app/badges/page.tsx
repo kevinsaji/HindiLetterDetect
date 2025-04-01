@@ -24,7 +24,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-// Badge types and their data
 interface Badge {
   id: string
   name: string
@@ -37,11 +36,10 @@ interface Badge {
 }
 
 export default function BadgesPage() {
-  const [progress, setProgress] = useState(42) // Example progress percentage
-  const [streakDays, setStreakDays] = useState(7) // Example streak days
-  const [totalLettersLearned, setTotalLettersLearned] = useState(19) // Example letters learned
+  const [progress, setProgress] = useState(42) 
+  const [streakDays, setStreakDays] = useState(7) 
+  const [totalLettersLearned, setTotalLettersLearned] = useState(19) 
 
-  // Mock data for badges - in a real app, this would come from a database or state management
   const [badges, setBadges] = useState<Badge[]>([
     // Progress badges
     {
@@ -162,18 +160,15 @@ export default function BadgesPage() {
     },
   ])
 
-  // Filter badges by category
   const progressBadges = badges.filter((badge) => badge.id.startsWith("progress-"))
   const streakBadges = badges.filter((badge) => badge.id.startsWith("streak-"))
   const specialBadges = badges.filter((badge) => !badge.id.startsWith("progress-") && !badge.id.startsWith("streak-"))
 
-  // Count earned badges
   const earnedBadges = badges.filter((badge) => badge.earned).length
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-purple-100 to-blue-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
             <Link href="/activity-choice">
@@ -199,7 +194,6 @@ export default function BadgesPage() {
           </div>
         </div>
 
-        {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card className="bg-white/90 shadow-lg border-2 border-purple-200">
             <CardHeader className="pb-2">
@@ -249,7 +243,6 @@ export default function BadgesPage() {
           </Card>
         </div>
 
-        {/* Badges Tabs */}
         <Tabs defaultValue="all" className="mb-8">
           <TabsList className="grid w-full grid-cols-4 bg-white/80 rounded-xl p-1 shadow-md">
             <TabsTrigger value="all" className="rounded-lg">
@@ -303,7 +296,6 @@ export default function BadgesPage() {
   )
 }
 
-// Badge Card Component
 function BadgeCard({ badge }: { badge: Badge }) {
   const Icon = badge.icon
 
@@ -345,7 +337,6 @@ function BadgeCard({ badge }: { badge: Badge }) {
   )
 }
 
-// Simple check icon component
 function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg

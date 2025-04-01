@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Hindi letters for the game
 const hindiLetters = [
   "अ",
   "आ",
@@ -68,16 +67,14 @@ const hindiLetters = [
   "ज्ञ",
 ]
 
-// Animal rewards
 const animalRewards = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵"]
 
-// Game levels
 const gameLevels = [
-  { speed: 4000, lettersPerWave: 2, targetCount: 5 }, // Level 1 - Slower for easier gameplay
-  { speed: 3500, lettersPerWave: 3, targetCount: 7 }, // Level 2
-  { speed: 3000, lettersPerWave: 3, targetCount: 10 }, // Level 3
-  { speed: 2500, lettersPerWave: 4, targetCount: 12 }, // Level 4
-  { speed: 2000, lettersPerWave: 4, targetCount: 15 }, // Level 5
+  { speed: 4000, lettersPerWave: 2, targetCount: 5 },
+  { speed: 3500, lettersPerWave: 3, targetCount: 7 }, 
+  { speed: 3000, lettersPerWave: 3, targetCount: 10 },
+  { speed: 2500, lettersPerWave: 4, targetCount: 12 }, 
+  { speed: 2000, lettersPerWave: 4, targetCount: 15 }, 
 ]
 
 export default function FallingLettersGame() {
@@ -87,7 +84,7 @@ export default function FallingLettersGame() {
   const [score, setScore] = useState(0)
   const [targetLetter, setTargetLetter] = useState("")
   const [fallingLetters, setFallingLetters] = useState<Array<{ id: string; letter: string; x: number }>>([])
-  const [basketPosition, setBasketPosition] = useState(50) // percentage from left
+  const [basketPosition, setBasketPosition] = useState(50)
   const [caughtCount, setCaughtCount] = useState(0)
   const [showReward, setShowReward] = useState(false)
   const [currentReward, setCurrentReward] = useState("")
@@ -98,7 +95,6 @@ export default function FallingLettersGame() {
   const [touchStartX, setTouchStartX] = useState(0)
   const [debugMessage, setDebugMessage] = useState("")
 
-  // Initialize the game
   const startGame = () => {
     setGameStarted(true)
     setGameCompleted(false)
@@ -108,18 +104,15 @@ export default function FallingLettersGame() {
     setFallingLetters([])
     selectNewTargetLetter()
 
-    // Check if mobile
     setIsMobile(window.innerWidth < 768)
   }
 
-  // Select a new target letter
   const selectNewTargetLetter = () => {
     const randomIndex = Math.floor(Math.random() * hindiLetters.length)
     setTargetLetter(hindiLetters[randomIndex])
     playLetterSound(hindiLetters[randomIndex])
   }
 
-  // Generate a new wave of falling letters
   const generateFallingLetters = () => {
     if (!gameAreaRef.current) return
 
@@ -127,7 +120,6 @@ export default function FallingLettersGame() {
     const level = gameLevels[currentLevel]
     const newLetters = []
 
-    // Include at least one target letter
     const targetX = Math.floor(Math.random() * (gameWidth - 50)) + 25 // Keep away from edges
     newLetters.push({
       id: `letter-${Date.now()}-target`,
@@ -135,7 +127,6 @@ export default function FallingLettersGame() {
       x: targetX,
     })
 
-    // Add other random letters
     for (let i = 1; i < level.lettersPerWave; i++) {
       let randomLetter
       do {
@@ -154,17 +145,13 @@ export default function FallingLettersGame() {
     setFallingLetters((prev) => [...prev, ...newLetters])
   }
 
-  // Play letter sound
   const playLetterSound = (letter: string) => {
     const utterance = new SpeechSynthesisUtterance(letter)
     utterance.lang = "hi-IN"
     speechSynthesis.speak(utterance)
   }
 
-  // Play game sounds
   const playSound = (type: "correct" | "wrong" | "reward") => {
-    // In a real app, you would play actual sound files
-    // For this demo, we'll use the Web Audio API to generate simple sounds
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
     const oscillator = audioContext.createOscillator()
     const gainNode = audioContext.createGain()
@@ -200,7 +187,6 @@ export default function FallingLettersGame() {
     }
   }
 
-  // Show animal reward animation
   const showAnimalReward = () => {
     const randomIndex = Math.floor(Math.random() * animalRewards.length)
     setCurrentReward(animalRewards[randomIndex])
@@ -212,13 +198,10 @@ export default function FallingLettersGame() {
     }, 3000)
   }
 
-  // Handle letter reaching bottom
   const handleLetterReachBottom = (letterId: string) => {
-    // Remove the letter from the array
     setFallingLetters((prev) => prev.filter((l) => l.id !== letterId))
   }
 
-  // Check if a letter is caught by the basket
   const checkLetterCaught = (letterId: string, letterElement: HTMLElement, letter: string) => {
     if (!basketRef.current || !gameAreaRef.current) return false
 
@@ -226,35 +209,27 @@ export default function FallingLettersGame() {
     const letterRect = letterElement.getBoundingClientRect()
     const gameRect = gameAreaRef.current.getBoundingClientRect()
 
-    // Check if the letter is at the bottom of the game area
     if (letterRect.bottom >= gameRect.bottom - 60 && letterRect.bottom <= gameRect.bottom - 20) {
-      // Check if the letter is within the basket's horizontal bounds
       if (
         letterRect.left + letterRect.width / 2 >= basketRect.left &&
         letterRect.left + letterRect.width / 2 <= basketRect.right
       ) {
-        // Letter is caught!
         if (letter === targetLetter) {
-          // Correct letter caught
           playSound("correct")
           setScore((prev) => prev + 10)
           setCaughtCount((prev) => {
             const newCount = prev + 1
 
-            // Check if we've caught enough for a reward
             if (newCount % 5 === 0) {
               showAnimalReward()
             }
 
-            // Check if level is complete
             const level = gameLevels[currentLevel]
             if (newCount >= level.targetCount) {
               if (currentLevel < gameLevels.length - 1) {
-                // Move to next level
                 setCurrentLevel((prev) => prev + 1)
-                return 0 // Reset caught count for new level
+                return 0
               } else {
-                // Game completed
                 setTimeout(() => {
                   setGameCompleted(true)
                 }, 1500)
@@ -264,9 +239,7 @@ export default function FallingLettersGame() {
             return newCount
           })
         } else {
-          // Wrong letter caught
           playSound("wrong")
-          // Make the basket shake
           if (basketRef.current) {
             basketRef.current.classList.add("shake")
             setTimeout(() => {
@@ -277,14 +250,13 @@ export default function FallingLettersGame() {
           }
         }
 
-        return true // Letter was caught
+        return true 
       }
     }
 
-    return false // Letter was not caught
+    return false 
   }
 
-  // Handle mouse movement for basket
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!gameAreaRef.current || !gameStarted || gameCompleted) return
 
@@ -292,14 +264,12 @@ export default function FallingLettersGame() {
     const x = e.clientX - rect.left
     const percentage = (x / rect.width) * 100
 
-    // Constrain the basket position to the game area
     const basketWidthPercentage = basketRef.current ? (basketRef.current.offsetWidth / rect.width) * 100 : 10
     const maxPosition = 100 - basketWidthPercentage
 
     setBasketPosition(Math.max(0, Math.min(percentage, maxPosition)))
   }
 
-  // Handle touch events for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length > 0) {
       setTouchStartX(e.touches[0].clientX)
@@ -312,17 +282,14 @@ export default function FallingLettersGame() {
     const rect = gameAreaRef.current.getBoundingClientRect()
     const touchX = e.touches[0].clientX
 
-    // Calculate position as percentage
     const percentage = ((touchX - rect.left) / rect.width) * 100
 
-    // Constrain the basket position to the game area
     const basketWidthPercentage = basketRef.current ? (basketRef.current.offsetWidth / rect.width) * 100 : 10
     const maxPosition = 100 - basketWidthPercentage
 
     setBasketPosition(Math.max(0, Math.min(percentage, maxPosition)))
   }
 
-  // Update progress
   useEffect(() => {
     if (gameStarted && !gameCompleted) {
       const level = gameLevels[currentLevel]
@@ -331,14 +298,13 @@ export default function FallingLettersGame() {
     }
   }, [caughtCount, currentLevel, gameStarted, gameCompleted])
 
-  // Generate falling letters at intervals
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null
 
     if (gameStarted && !gameCompleted && !showReward) {
       intervalId = setInterval(() => {
         generateFallingLetters()
-      }, gameLevels[currentLevel].speed / 2) // Generate letters more frequently
+      }, gameLevels[currentLevel].speed / 2) 
     }
 
     return () => {
@@ -346,7 +312,6 @@ export default function FallingLettersGame() {
     }
   }, [gameStarted, gameCompleted, currentLevel, targetLetter, showReward])
 
-  // Check for letter catches
   useEffect(() => {
     if (!gameStarted || gameCompleted) return
 
@@ -356,17 +321,15 @@ export default function FallingLettersGame() {
         if (letterElement) {
           const isCaught = checkLetterCaught(fallingLetter.id, letterElement, fallingLetter.letter)
           if (isCaught) {
-            // Remove the caught letter
             setFallingLetters((prev) => prev.filter((l) => l.id !== fallingLetter.id))
           }
         }
       })
-    }, 100) // Check frequently
+    }, 100)
 
     return () => clearInterval(checkInterval)
   }, [fallingLetters, gameStarted, gameCompleted])
 
-  // Add CSS for the shake animation
   useEffect(() => {
     const style = document.createElement("style")
     style.textContent = `
@@ -388,7 +351,6 @@ export default function FallingLettersGame() {
     }
   }, [])
 
-  // Update window size detection
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768)
@@ -401,7 +363,6 @@ export default function FallingLettersGame() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 via-teal-100 to-cyan-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <Link href="/activity-choice">
@@ -456,7 +417,6 @@ export default function FallingLettersGame() {
           </DropdownMenu>
         </div>
 
-        {/* Game Container */}
         <div
           className="bg-white rounded-3xl shadow-xl border-4 border-teal-200 relative overflow-hidden"
           style={{ height: "70vh", minHeight: "500px" }}
@@ -514,7 +474,6 @@ export default function FallingLettersGame() {
                 </div>
               </div>
 
-              {/* Falling Letters */}
               <div className="absolute top-16 left-0 right-0 bottom-20 overflow-hidden">
                 {fallingLetters.map((letter) => (
                   <motion.div
@@ -535,7 +494,6 @@ export default function FallingLettersGame() {
                 ))}
               </div>
 
-              {/* Basket */}
               <div
                 ref={basketRef}
                 className="absolute bottom-0 z-10"
@@ -551,7 +509,6 @@ export default function FallingLettersGame() {
                 </div>
               </div>
 
-              {/* Animal Reward Animation */}
               <AnimatePresence>
                 {showReward && (
                   <motion.div
@@ -569,21 +526,18 @@ export default function FallingLettersGame() {
                 )}
               </AnimatePresence>
 
-              {/* Mobile Controls Hint */}
               {isMobile && gameStarted && !gameCompleted && !showReward && (
                 <div className="absolute bottom-20 left-0 right-0 text-center text-teal-600 text-sm">
                   Swipe left or right to move the basket
                 </div>
               )}
 
-              {/* Debug info - can be removed in production */}
               {debugMessage && (
                 <div className="absolute bottom-24 left-0 right-0 text-center text-xs text-red-500">{debugMessage}</div>
               )}
             </div>
           )}
 
-          {/* Game Completed Screen */}
           {gameCompleted && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -611,7 +565,6 @@ export default function FallingLettersGame() {
           )}
         </div>
 
-        {/* Badges Button */}
         <div className="fixed bottom-8 right-8">
           <Link href="/badges">
             <Button className="h-16 w-16 rounded-full bg-teal-600 hover:bg-teal-700 shadow-lg flex items-center justify-center">

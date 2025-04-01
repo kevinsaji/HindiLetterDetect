@@ -565,7 +565,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-amber-100 to-yellow-200">
       <div className="container mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-screen">
         <div className="text-center max-w-4xl">
-          {/* Logo/Icon */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -577,7 +576,6 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* English Title */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -587,7 +585,6 @@ export default function HomePage() {
             Hindi Learning System
           </motion.h1>
 
-          {/* Hindi Title */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -597,7 +594,6 @@ export default function HomePage() {
             हिंदी शिक्षण प्रणाली
           </motion.h2>
 
-          {/* Description */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -608,7 +604,6 @@ export default function HomePage() {
             tracing and freehand drawing tools.
           </motion.p>
 
-          {/* Features */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -638,7 +633,6 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -655,7 +649,6 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* Decorative Elements */}
         <div className="absolute top-20 left-20 opacity-20 hidden lg:block">
           <div className="text-9xl text-amber-600 font-bold">अ</div>
         </div>
@@ -663,7 +656,6 @@ export default function HomePage() {
           <div className="text-9xl text-amber-600 font-bold">क</div>
         </div>
 
-        {/* Floating Decorative Elements */}
         <motion.div
           className="absolute top-1/4 right-1/3 opacity-10 hidden lg:block"
           animate={{

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import confetti from "canvas-confetti"
 
-// Hindi letters for the game
 const hindiLetters = [
   "अ",
   "आ",
@@ -67,12 +66,11 @@ const hindiLetters = [
   "ज्ञ",
 ]
 
-// Game level configuration
 const gameLevels = [
-  { choices: 2, rounds: 5, timeLimit: 0 }, // Level 1: 2 choices, no time limit
-  { choices: 3, rounds: 7, timeLimit: 0 }, // Level 2: 3 choices, no time limit
-  { choices: 4, rounds: 10, timeLimit: 0 }, // Level 3: 4 choices, no time limit
-  { choices: 4, rounds: 10, timeLimit: 10 }, // Level 4: 4 choices, 10 second time limit
+  { choices: 2, rounds: 5, timeLimit: 0 }, 
+  { choices: 3, rounds: 7, timeLimit: 30 }, 
+  { choices: 4, rounds: 10, timeLimit: 20 }, 
+  { choices: 4, rounds: 10, timeLimit: 10 }, 
 ]
 
 export default function GamesPage() {
@@ -89,7 +87,6 @@ export default function GamesPage() {
   const [progress, setProgress] = useState(0)
   const confettiRef = useRef<HTMLDivElement>(null)
 
-  // Start a new game
   const startGame = () => {
     setCurrentLevel(0)
     setCurrentRound(0)
@@ -99,18 +96,14 @@ export default function GamesPage() {
     startNewRound(0, 0)
   }
 
-  // Start a new round
   const startNewRound = (level: number, round: number) => {
-    // Select a random target letter
     const randomIndex = Math.floor(Math.random() * hindiLetters.length)
     const target = hindiLetters[randomIndex]
     setTargetLetter(target)
 
-    // Generate letter choices including the target
     const numChoices = gameLevels[level].choices
     const choices = [target]
 
-    // Add random incorrect choices
     while (choices.length < numChoices) {
       const randomChoice = hindiLetters[Math.floor(Math.random() * hindiLetters.length)]
       if (!choices.includes(randomChoice)) {
@@ -118,31 +111,25 @@ export default function GamesPage() {
       }
     }
 
-    // Shuffle the choices
     setLetterChoices(shuffleArray(choices))
 
-    // Set time limit if applicable
     if (gameLevels[level].timeLimit > 0) {
       setTimeLeft(gameLevels[level].timeLimit)
     }
 
-    // Update progress
     const totalRounds = gameLevels.reduce((sum, level) => sum + level.rounds, 0)
     const completedRounds = gameLevels.slice(0, level).reduce((sum, l) => sum + l.rounds, 0) + round
     setProgress((completedRounds / totalRounds) * 100)
   }
 
-  // Handle letter selection
   const handleLetterSelect = (letter: string) => {
     const correct = letter === targetLetter
     setIsCorrect(correct)
     setShowFeedback(true)
 
     if (correct) {
-      // Play success sound
       playSound("success")
 
-      // Trigger confetti for correct answers
       if (confettiRef.current) {
         const rect = confettiRef.current.getBoundingClientRect()
         confetti({
@@ -155,48 +142,37 @@ export default function GamesPage() {
         })
       }
 
-      // Update score
       setScore(score + 1)
     } else {
-      // Play error sound
       playSound("error")
     }
 
-    // Show feedback for 1.5 seconds
     setTimeout(() => {
       setShowFeedback(false)
 
-      // Move to next round or level
       const currentLevelConfig = gameLevels[currentLevel]
 
       if (currentRound + 1 < currentLevelConfig.rounds) {
-        // Next round in same level
         setCurrentRound(currentRound + 1)
         startNewRound(currentLevel, currentRound + 1)
       } else if (currentLevel + 1 < gameLevels.length) {
-        // Next level
         setCurrentLevel(currentLevel + 1)
         setCurrentRound(0)
         startNewRound(currentLevel + 1, 0)
       } else {
-        // Game completed
         setGameCompleted(true)
         playSound("gameComplete")
       }
     }, 1500)
   }
 
-  // Play audio for the target letter
   const playTargetLetterSound = () => {
     const utterance = new SpeechSynthesisUtterance(targetLetter)
     utterance.lang = "hi-IN"
     speechSynthesis.speak(utterance)
   }
 
-  // Play game sounds
   const playSound = (type: "success" | "error" | "gameComplete") => {
-    // In a real app, you would play actual sound files
-    // For this demo, we'll use the Web Audio API to generate simple sounds
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
     const oscillator = audioContext.createOscillator()
     const gainNode = audioContext.createGain()
@@ -234,7 +210,6 @@ export default function GamesPage() {
     }
   }
 
-  // Timer effect for timed levels
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null
 
@@ -243,7 +218,6 @@ export default function GamesPage() {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(timer as NodeJS.Timeout)
-            // Time's up - count as incorrect
             handleLetterSelect("")
             return 0
           }
@@ -257,14 +231,12 @@ export default function GamesPage() {
     }
   }, [gameStarted, gameCompleted, showFeedback, timeLeft])
 
-  // Play target letter sound when a new round starts
   useEffect(() => {
     if (targetLetter && !showFeedback) {
       playTargetLetterSound()
     }
   }, [targetLetter, showFeedback])
 
-  // Helper function to shuffle an array
   const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array]
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -277,7 +249,6 @@ export default function GamesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 via-indigo-100 to-purple-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <Link href="/activity-choice">
@@ -332,9 +303,7 @@ export default function GamesPage() {
           </DropdownMenu>
         </div>
 
-        {/* Game Container */}
         <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10 border-4 border-indigo-200 relative overflow-hidden">
-          {/* Confetti container */}
           <div ref={confettiRef} className="absolute inset-0 pointer-events-none"></div>
 
           {!gameStarted && !gameCompleted && (
@@ -354,7 +323,6 @@ export default function GamesPage() {
 
           {gameStarted && !gameCompleted && (
             <div className="flex flex-col items-center">
-              {/* Progress and Score */}
               <div className="w-full flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-indigo-700 font-medium">Level {currentLevel + 1}</span>
@@ -372,7 +340,6 @@ export default function GamesPage() {
                 )}
               </div>
 
-              {/* Target Letter */}
               <div className="mb-8 relative">
                 <motion.div
                   key={targetLetter}
@@ -390,7 +357,6 @@ export default function GamesPage() {
                 </Button>
               </div>
 
-              {/* Letter Choices */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-2xl">
                 {letterChoices.map((letter, index) => (
                   <motion.div
@@ -412,7 +378,6 @@ export default function GamesPage() {
                 ))}
               </div>
 
-              {/* Feedback Overlay */}
               <AnimatePresence>
                 {showFeedback && (
                   <motion.div
@@ -442,7 +407,6 @@ export default function GamesPage() {
             </div>
           )}
 
-          {/* Game Completed Screen */}
           {gameCompleted && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-10">
               <h2 className="text-4xl font-bold text-indigo-700 mb-4">Game Completed!</h2>
@@ -466,7 +430,6 @@ export default function GamesPage() {
           )}
         </div>
 
-        {/* Badges Button */}
         <div className="fixed bottom-8 right-8">
           <Link href="/badges">
             <Button className="h-16 w-16 rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg flex items-center justify-center">

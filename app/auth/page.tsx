@@ -19,7 +19,6 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
 
-  // Form states
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
   const [signupName, setSignupName] = useState("")
@@ -27,7 +26,6 @@ export default function AuthPage() {
   const [signupPassword, setSignupPassword] = useState("")
   const [signupConfirmPassword, setSignupConfirmPassword] = useState("")
 
-  // Form validation states
   const [loginError, setLoginError] = useState("")
   const [signupError, setSignupError] = useState("")
   const [passwordMatchError, setPasswordMatchError] = useState(false)
@@ -37,11 +35,8 @@ export default function AuthPage() {
     setIsLoading(true)
     setLoginError("")
 
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      // In a real app, you would validate credentials with your backend
-      // For demo purposes, we'll just redirect to the learn page
       router.push("/activity-choice")
     }, 1500)
   }
@@ -57,16 +52,12 @@ export default function AuthPage() {
       return
     }
 
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      // In a real app, you would create the user account with your backend
-      // For demo purposes, we'll just redirect to the learn page
       router.push("/activity-choice")
     }, 1500)
   }
 
-  // Check password match on change
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignupConfirmPassword(e.target.value)
     setPasswordMatchError(signupPassword !== e.target.value && e.target.value !== "")
@@ -75,7 +66,6 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-purple-100 to-blue-100 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Back to home link */}
         <div className="mb-6">
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2 text-purple-700">
@@ -85,7 +75,6 @@ export default function AuthPage() {
           </Link>
         </div>
 
-        {/* Logo */}
         <div className="flex justify-center mb-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -98,7 +87,6 @@ export default function AuthPage() {
           </motion.div>
         </div>
 
-        {/* Auth Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -122,7 +110,6 @@ export default function AuthPage() {
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
-              {/* Login Form */}
               <TabsContent value="login">
                 <form onSubmit={handleLogin}>
                   <CardContent className="space-y-4">
@@ -180,7 +167,6 @@ export default function AuthPage() {
                 </form>
               </TabsContent>
 
-              {/* Sign Up Form */}
               <TabsContent value="signup">
                 <form onSubmit={handleSignup}>
                   <CardContent className="space-y-4">
@@ -293,7 +279,6 @@ export default function AuthPage() {
           </Card>
         </motion.div>
 
-        {/* Decorative elements */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>
             By continuing, you agree to our{" "}
