@@ -129,12 +129,6 @@ export default function AuthPage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <Label htmlFor="login-password">Password</Label>
-                        <Link href="#" className="text-xs text-purple-600 hover:underline">
-                          Forgot password?
-                        </Link>
-                      </div>
                       <div className="relative">
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -177,7 +171,7 @@ export default function AuthPage() {
                         <Input
                           id="signup-name"
                           type="text"
-                          placeholder="John Doe"
+                          placeholder="User Name"
                           className="pl-10"
                           value={signupName}
                           onChange={(e) => setSignupName(e.target.value)}
