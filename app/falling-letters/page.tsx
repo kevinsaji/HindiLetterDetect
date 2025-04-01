@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useUserStore } from "@/lib/store";
 import { Progress } from "@/components/ui/progress"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Volume2, Medal, User, LogOut } from "lucide-react"
@@ -94,6 +95,7 @@ export default function FallingLettersGame() {
   const [isMobile, setIsMobile] = useState(false)
   const [touchStartX, setTouchStartX] = useState(0)
   const [debugMessage, setDebugMessage] = useState("")
+  const user = useUserStore((state) => state.user);
 
   const startGame = () => {
     setGameStarted(true)
@@ -388,8 +390,8 @@ export default function FallingLettersGame() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Student</p>
-                  <p className="text-xs leading-none text-muted-foreground">student@nitk.edu.in</p>
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.user_email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

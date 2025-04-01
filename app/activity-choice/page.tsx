@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import { useUserStore } from "@/lib/store";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -19,6 +20,7 @@ import {
 
 export default function ChooseActivityPage() {
   const [mounted, setMounted] = useState(false)
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     setMounted(true)
@@ -54,8 +56,8 @@ export default function ChooseActivityPage() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Student</p>
-                  <p className="text-xs leading-none text-muted-foreground">student@nitk.edu.in</p>
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.user_email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

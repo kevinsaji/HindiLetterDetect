@@ -1,0 +1,29 @@
+[
+  {
+    "username": "Sricharan Sridhar",
+    "user_email": "sricharans04@gmail.com",
+    "user_password": "12345678",
+    "letters_completed": [],
+    "last_login_date": "2025-04-01T19:48:02.124Z",
+    "login_streak": 6,
+    "longest_login_streak": 10
+  },
+  {
+    "username": "Kevin Saji Jacob",
+    "user_email": "kevinsajijacob@gmail.com",
+    "user_password": "abcdef",
+    "letters_completed": [],
+    "last_login_date": "2025-04-01T19:44:54.959Z",
+    "login_streak": 1,
+    "longest_login_streak": 3
+  },
+  {
+    "username": "Jyotsana Achal",
+    "user_email": "jyotsana.achal@gmail.com",
+    "user_password": "abcd1234",
+    "letters_completed": [],
+    "last_login_date": "2025-04-01T19:12:20.305Z",
+    "login_streak": 1,
+    "longest_login_streak": 1
+  }
+]

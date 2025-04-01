@@ -6,12 +6,15 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useUserStore } from "@/lib/store";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from "lucide-react"
+console.log("c1");
+
 
 export default function AuthPage() {
   const router = useRouter()
@@ -30,33 +33,83 @@ export default function AuthPage() {
   const [signupError, setSignupError] = useState("")
   const [passwordMatchError, setPasswordMatchError] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setLoginError("")
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setLoginError("");
+  
+    try {
+      const response = await fetch("auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: loginEmail }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        setLoginError(data.message);
+        setIsLoading(false);
+        return;
+      }
 
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/activity-choice")
-    }, 1500)
-  }
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setSignupError("")
-
-    if (signupPassword !== signupConfirmPassword) {
-      setPasswordMatchError(true)
-      setIsLoading(false)
-      return
+      useUserStore.getState().setUser(data.user);
+  
+      setTimeout(() => {
+        setIsLoading(false);
+        router.push("/activity-choice");
+      }, 1500);
+    } catch (error) {
+      setLoginError("Error connecting to server");
+      setIsLoading(false);
     }
-
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/activity-choice")
-    }, 1500)
   }
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setSignupError("");
+  
+    if (signupPassword !== signupConfirmPassword) {
+      setPasswordMatchError(true);
+      setIsLoading(false);
+      return;
+    }
+  
+    try {
+      const response = await fetch("auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: signupName,
+          email: signupEmail,
+          password: signupPassword,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        setSignupError(data.message);
+        setIsLoading(false);
+        return;
+      }
+
+      useUserStore.getState().setUser(data.user);
+  
+      setTimeout(() => {
+        setIsLoading(false);
+        router.push("/activity-choice");
+      }, 1500);
+    } catch (error) {
+      setSignupError("Error connecting to server");
+      setIsLoading(false);
+    }
+  };
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignupConfirmPassword(e.target.value)
@@ -290,4 +343,3 @@ export default function AuthPage() {
     </div>
   )
 }
-

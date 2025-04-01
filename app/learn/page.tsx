@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { useUserStore } from "@/lib/store";
 import { Toggle } from "@/components/ui/toggle"
 import { Volume2, Pencil, Edit3, User, LogOut, Medal, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import {
@@ -104,6 +105,7 @@ export default function HindiLearning() {
   const [drawnPixels, setDrawnPixels] = useState<{ x: number; y: number }[]>([])
   const [isVerifying, setIsVerifying] = useState(false)
   const [similarityScore, setSimilarityScore] = useState<number | null>(null)
+  const user = useUserStore((state) => state.user);
 
   // Effect to handle canvas setup and letter overlay
   useEffect(() => {
@@ -350,8 +352,8 @@ export default function HindiLearning() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Student</p>
-                  <p className="text-xs leading-none text-muted-foreground">student@nitk.edu.in</p>
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.user_email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

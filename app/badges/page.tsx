@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useUserStore } from "@/lib/store";
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -36,135 +37,101 @@ interface Badge {
 }
 
 export default function BadgesPage() {
-  const [progress, setProgress] = useState(42) 
-  const [streakDays, setStreakDays] = useState(7) 
+  const [progress, setProgress] = useState(0) 
+  const [streakDays, setStreakDays] = useState(0) 
   const [totalLettersLearned, setTotalLettersLearned] = useState(19) 
+  const user = useUserStore((state) => state.user);
 
-  const [badges, setBadges] = useState<Badge[]>([
-    // Progress badges
-    {
-      id: "progress-25",
-      name: "Beginner Scholar",
-      description: "Completed 25% of Hindi letters",
-      icon: Trophy,
-      color: "bg-amber-500",
-      earned: progress >= 25,
-      progress: Math.min((progress / 25) * 100, 100),
-      date: progress >= 25 ? "March 5, 2025" : undefined,
-    },
-    {
-      id: "progress-50",
-      name: "Intermediate Learner",
-      description: "Completed 50% of Hindi letters",
-      icon: Medal,
-      color: "bg-emerald-500",
-      earned: progress >= 50,
-      progress: Math.min((progress / 50) * 100, 100),
-      date: progress >= 50 ? "March 10, 2025" : undefined,
-    },
-    {
-      id: "progress-75",
-      name: "Advanced Student",
-      description: "Completed 75% of Hindi letters",
-      icon: Award,
-      color: "bg-blue-500",
-      earned: progress >= 75,
-      progress: Math.min((progress / 75) * 100, 100),
-    },
-    {
-      id: "progress-100",
-      name: "Hindi Master",
-      description: "Completed 100% of Hindi letters",
-      icon: Star,
-      color: "bg-purple-600",
-      earned: progress >= 100,
-      progress: Math.min((progress / 100) * 100, 100),
-    },
+  const [badges, setBadges] = useState<Badge[]>([]);
 
-    // Streak badges
-    {
-      id: "streak-3",
-      name: "Consistent Learner",
-      description: "Practiced for 3 days in a row",
-      icon: Flame,
-      color: "bg-orange-500",
-      earned: streakDays >= 3,
-      progress: Math.min((streakDays / 3) * 100, 100),
-      date: streakDays >= 3 ? "March 3, 2025" : undefined,
-    },
-    {
-      id: "streak-7",
-      name: "Weekly Warrior",
-      description: "Practiced for 7 days in a row",
-      icon: Calendar,
-      color: "bg-red-500",
-      earned: streakDays >= 7,
-      progress: Math.min((streakDays / 7) * 100, 100),
-      date: streakDays >= 7 ? "March 7, 2025" : undefined,
-    },
-    {
-      id: "streak-30",
-      name: "Monthly Master",
-      description: "Practiced for 30 days in a row",
-      icon: Clock,
-      color: "bg-indigo-600",
-      earned: streakDays >= 30,
-      progress: Math.min((streakDays / 30) * 100, 100),
-    },
+  useEffect(() => {
+    if (user) {
+      // Calculate Progress
+      const progressPercentage = (user.letters_completed.length / 46) * 100;
+      setProgress(progressPercentage);
 
-    // Special achievement badges
-    {
-      id: "perfect-10",
-      name: "Perfect 10",
-      description: "Got 10 perfect scores in a row",
-      icon: Zap,
-      color: "bg-yellow-500",
-      earned: false,
-      progress: 40,
-    },
-    {
-      id: "speed-writer",
-      name: "Speed Writer",
-      description: "Completed a letter in under 10 seconds",
-      icon: BookOpen,
-      color: "bg-cyan-500",
-      earned: true,
-      date: "March 4, 2025",
-    },
-    {
-      id: "vowel-virtuoso",
-      name: "Vowel Virtuoso",
-      description: "Mastered all Hindi vowels",
-      icon: Sparkles,
-      color: "bg-pink-500",
-      earned: true,
-      date: "March 6, 2025",
-    },
-    {
-      id: "consonant-champion",
-      name: "Consonant Champion",
-      description: "Mastered all Hindi consonants",
-      icon: Medal,
-      color: "bg-teal-500",
-      earned: false,
-      progress: 65,
-    },
-    {
-      id: "early-bird",
-      name: "Early Bird",
-      description: "Practiced Hindi before 7 AM",
-      icon: Flame,
-      color: "bg-amber-600",
-      earned: true,
-      date: "March 2, 2025",
-    },
-  ])
+      // Get Streak Days
+      setStreakDays(user.login_streak);
 
-  const progressBadges = badges.filter((badge) => badge.id.startsWith("progress-"))
-  const streakBadges = badges.filter((badge) => badge.id.startsWith("streak-"))
-  const specialBadges = badges.filter((badge) => !badge.id.startsWith("progress-") && !badge.id.startsWith("streak-"))
+      // Update Badges
+      setBadges([
+        // Progress badges
+        {
+          id: "progress-25",
+          name: "Beginner Scholar",
+          description: "Completed 25% of Hindi letters",
+          icon: Trophy,
+          color: "bg-amber-500",
+          earned: progressPercentage >= 25,
+          progress: Math.min((progressPercentage / 25) * 100, 100),
+          date: progressPercentage >= 25 ? "March 5, 2025" : undefined,
+        },
+        {
+          id: "progress-50",
+          name: "Intermediate Learner",
+          description: "Completed 50% of Hindi letters",
+          icon: Medal,
+          color: "bg-emerald-500",
+          earned: progressPercentage >= 50,
+          progress: Math.min((progressPercentage / 50) * 100, 100),
+          date: progressPercentage >= 50 ? "March 10, 2025" : undefined,
+        },
+        {
+          id: "progress-75",
+          name: "Advanced Student",
+          description: "Completed 75% of Hindi letters",
+          icon: Award,
+          color: "bg-blue-500",
+          earned: progressPercentage >= 75,
+          progress: Math.min((progressPercentage / 75) * 100, 100),
+        },
+        {
+          id: "progress-100",
+          name: "Hindi Master",
+          description: "Completed 100% of Hindi letters",
+          icon: Star,
+          color: "bg-purple-600",
+          earned: progressPercentage >= 100,
+          progress: Math.min((progressPercentage / 100) * 100, 100),
+        },
 
-  const earnedBadges = badges.filter((badge) => badge.earned).length
+        // Streak badges
+        {
+          id: "streak-3",
+          name: "Consistent Learner",
+          description: "Practiced for 3 days in a row",
+          icon: Flame,
+          color: "bg-orange-500",
+          earned: user.login_streak >= 3 || user.longest_login_streak >= 3,
+          progress: Math.min((Math.max(user.login_streak, user.longest_login_streak) / 3) * 100, 100),
+          date: (user.login_streak >= 3 || user.longest_login_streak >= 3) ? "March 3, 2025" : undefined,
+        },
+        {
+          id: "streak-7",
+          name: "Weekly Warrior",
+          description: "Practiced for 7 days in a row",
+          icon: Calendar,
+          color: "bg-red-500",
+          earned: user.login_streak >= 7 || user.longest_login_streak >= 7,
+          progress: Math.min((Math.max(user.login_streak, user.longest_login_streak) / 7) * 100, 100),
+          date: (user.login_streak >= 7 || user.longest_login_streak >= 7) ? "March 7, 2025" : undefined,
+        },
+        {
+          id: "streak-30",
+          name: "Monthly Master",
+          description: "Practiced for 30 days in a row",
+          icon: Clock,
+          color: "bg-indigo-600",
+          earned: user.login_streak >= 30 || user.longest_login_streak >= 30,
+          progress: Math.min((Math.max(user.login_streak, user.longest_login_streak) / 30) * 100, 100),
+        },
+      ]);
+    }
+  }, [user]);
+
+  const progressBadges = badges.filter((badge) => badge.id.startsWith("progress-"));
+  const streakBadges = badges.filter((badge) => badge.id.startsWith("streak-"));
+  const earnedBadges = badges.filter((badge) => badge.earned).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-purple-100 to-blue-100 p-4 md:p-8">
@@ -188,8 +155,8 @@ export default function BadgesPage() {
               <AvatarFallback>UN</AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">Student</p>
-              <p className="text-sm text-muted-foreground">Level 3 Hindi Learner</p>
+              <p className="font-medium">{user?.username}</p>
+              <p className="text-sm text-muted-foreground">{user?.user_email}</p>
             </div>
           </div>
         </div>
@@ -244,7 +211,7 @@ export default function BadgesPage() {
         </div>
 
         <Tabs defaultValue="all" className="mb-8">
-          <TabsList className="grid w-full grid-cols-4 bg-white/80 rounded-xl p-1 shadow-md">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 rounded-xl p-1 shadow-md">
             <TabsTrigger value="all" className="rounded-lg">
               All Badges
             </TabsTrigger>
@@ -253,9 +220,6 @@ export default function BadgesPage() {
             </TabsTrigger>
             <TabsTrigger value="streaks" className="rounded-lg">
               Streaks
-            </TabsTrigger>
-            <TabsTrigger value="special" className="rounded-lg">
-              Special
             </TabsTrigger>
           </TabsList>
 
@@ -278,14 +242,6 @@ export default function BadgesPage() {
           <TabsContent value="streaks" className="mt-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {streakBadges.map((badge) => (
-                <BadgeCard key={badge.id} badge={badge} />
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="special" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {specialBadges.map((badge) => (
                 <BadgeCard key={badge.id} badge={badge} />
               ))}
             </div>
@@ -331,7 +287,6 @@ function BadgeCard({ badge }: { badge: Badge }) {
             <Progress value={badge.progress} className="h-2" />
           </div>
         )}
-        {badge.earned && badge.date && <div className="text-sm text-muted-foreground">Earned on {badge.date}</div>}
       </CardContent>
     </Card>
   )

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { useUserStore } from "@/lib/store";
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Volume2, Medal, User, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -86,6 +87,7 @@ export default function GamesPage() {
   const [timeLeft, setTimeLeft] = useState(0)
   const [progress, setProgress] = useState(0)
   const confettiRef = useRef<HTMLDivElement>(null)
+  const user = useUserStore((state) => state.user);
 
   const startGame = () => {
     setCurrentLevel(0)
@@ -274,8 +276,8 @@ export default function GamesPage() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Student</p>
-                  <p className="text-xs leading-none text-muted-foreground">student@nitk.edu.in</p>
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.user_email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
