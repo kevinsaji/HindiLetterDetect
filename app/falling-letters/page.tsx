@@ -462,7 +462,7 @@ export default function FallingLettersGame() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="text-3xl font-bold text-teal-700">{targetLetter}</div>
+                  <div className="text-3xl font-bold text-teal-700">?</div>
                   <Button
                     onClick={() => playLetterSound(targetLetter)}
                     className="bg-teal-200 hover:bg-teal-300 text-teal-700 rounded-full h-8 w-8 p-0"
@@ -481,7 +481,7 @@ export default function FallingLettersGame() {
                   <motion.div
                     id={letter.id}
                     key={letter.id}
-                    className={`absolute text-3xl font-bold ${letter.letter === targetLetter ? "text-green-600" : "text-purple-600"} z-10`}
+                    className={`absolute text-3xl font-bold ${letter.letter === targetLetter ? "text-purple-600" : "text-purple-600"} z-10`}
                     initial={{ y: -50, x: letter.x }}
                     animate={{ y: "calc(100vh - 100px)" }}
                     transition={{
