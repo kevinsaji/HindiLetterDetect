@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Link from "next/link"
 import path from "path";
-
+import { useRouter } from "next/navigation";
 
 // Hindi vowels with their completion status
 const hindiLetters = [
@@ -90,6 +90,7 @@ const errorMessages = [
 ]
 
 export default function HindiLearning() {
+  const router = useRouter();
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0)
   const [isTracing, setIsTracing] = useState(true)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -100,12 +101,68 @@ export default function HindiLearning() {
   const [isCorrect, setIsCorrect] = useState(false)
   const [progress, setProgress] = useState(0)
   const [completedLetters, setCompletedLetters] = useState(new Array(hindiLetters.length).fill(false))
+  const [completedLetterValues, setCompletedLetterValues] = useState<string[]>([])
   const [feedbackMessage, setFeedbackMessage] = useState("")
   const [showFeedback, setShowFeedback] = useState(false)
   const [drawnPixels, setDrawnPixels] = useState<{ x: number; y: number }[]>([])
   const [isVerifying, setIsVerifying] = useState(false)
   const [similarityScore, setSimilarityScore] = useState<number | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
   const user = useUserStore((state) => state.user);
+
+  // Function to update progress to server
+  const updateProgressToServer = async (): Promise<boolean> => {
+    if (!user) return false;
+    
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/update-progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.user_email,
+          completedLetters: completedLetterValues,
+        }),
+      });
+      console.log(response);
+      if (!response.ok) {
+        console.error('Failed to update progress');
+        return false;
+      }
+      user.letters_completed = completedLetterValues;
+      return true;
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Load user's completed letters on mount
+  useEffect(() => {
+    if (user && user.letters_completed) {
+      // Update completed letters from user data
+      const newCompletedLetters = new Array(hindiLetters.length).fill(false);
+      const newCompletedLetterValues: string[] = [...user.letters_completed];
+      
+      hindiLetters.forEach((letter, index) => {
+        if (user.letters_completed.includes(letter.letter)) {
+          newCompletedLetters[index] = true;
+        }
+      });
+      
+      setCompletedLetters(newCompletedLetters);
+      setCompletedLetterValues(newCompletedLetterValues);
+      
+      // Update progress
+      const completed = newCompletedLetters.filter(Boolean).length;
+      const total = hindiLetters.length;
+      setProgress((completed / total) * 100);
+    }
+  }, [user]);
 
   // Effect to handle canvas setup and letter overlay
   useEffect(() => {
@@ -233,7 +290,6 @@ export default function HindiLearning() {
     }
   }
 
-  
   const checkDrawing = async () => {
     if (drawnPixels.length === 0) {
       setFeedbackMessage("Please draw something first.")
@@ -258,11 +314,17 @@ export default function HindiLearning() {
         setFeedbackMessage(successMessages[randomIndex])
         
         // Mark letter as complete if correct
+        const currentLetter = hindiLetters[currentLetterIndex].letter;
         setCompletedLetters((prev) => {
           const newCompleted = [...prev]
           newCompleted[currentLetterIndex] = true
           return newCompleted
         })
+        
+        // Add to completed letter values if not already there
+        if (!completedLetterValues.includes(currentLetter)) {
+          setCompletedLetterValues(prev => [...prev, currentLetter]);
+        }
       } else {
         const randomIndex = Math.floor(Math.random() * errorMessages.length)
         setFeedbackMessage(errorMessages[randomIndex])
@@ -291,14 +353,6 @@ export default function HindiLearning() {
     } finally {
       setIsVerifying(false)
     }
-  }
-
-  const markLetterComplete = () => {
-    setCompletedLetters((prev) => {
-      const newCompleted = [...prev]
-      newCompleted[currentLetterIndex] = true
-      return newCompleted
-    })
   }
 
   const clearCanvas = () => {
@@ -331,6 +385,45 @@ export default function HindiLearning() {
     speechSynthesis.speak(utterance)
   }
 
+  // Handle navigation with progress saving
+  const handleNavigate = async (path: string) => {
+    setIsSaving(true);
+    try {
+      // Wait for the progress to be saved first
+      const success = await updateProgressToServer();
+      if (success) {
+        router.push(path);
+      } else {
+        console.error("Failed to save progress before navigation");
+        // Navigate anyway after a short delay
+        setTimeout(() => router.push(path), 500);
+      }
+    } catch (error) {
+      console.error("Error during navigation:", error);
+      router.push(path);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle logout with progress saving
+  const handleLogout = async () => {
+    setIsSaving(true);
+    try {
+      // Save progress first
+      await updateProgressToServer();
+      // Then logout
+      useUserStore.getState().logout();
+      router.push('/');
+    } catch (error) {
+      console.error("Error during logout:", error);
+      useUserStore.getState().logout();
+      router.push('/');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-100 via-purple-100 to-blue-100 p-8">
       <div className="max-w-6xl mx-auto">
@@ -357,25 +450,64 @@ export default function HindiLearning() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/badges" className="flex items-center w-full">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile & Badges</span>
-                </Link>
+              <DropdownMenuItem asChild>
+                <button 
+                  className="w-full flex items-center cursor-pointer" 
+                  onClick={() => handleNavigate('/badges')}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile & Badges</span>
+                    </>
+                  )}
+                </button>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/activity-choice" className="flex items-center w-full">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Activities</span>
-                </Link>
+              <DropdownMenuItem asChild>
+                <button 
+                  className="w-full flex items-center cursor-pointer" 
+                  onClick={() => handleNavigate('/activity-choice')}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Activities</span>
+                    </>
+                  )}
+                </button>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/" className="flex items-center w-full">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Log-Out</span>
-                </Link>
+              <DropdownMenuItem asChild>
+                <button 
+                  className="w-full flex items-center cursor-pointer" 
+                  onClick={handleLogout}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log-Out</span>
+                    </>
+                  )}
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -545,12 +677,18 @@ export default function HindiLearning() {
           </div>
         </div>
         <div className="fixed bottom-8 right-8">
-          <Link href="/badges">
-            <Button className="h-16 w-16 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg flex items-center justify-center">
+          <Button 
+            onClick={() => handleNavigate('/badges')}
+            disabled={isSaving}
+            className="h-16 w-16 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg flex items-center justify-center"
+          >
+            {isSaving ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
               <Medal className="h-8 w-8" />
-              <span className="sr-only">View Badges</span>
-            </Button>
-          </Link>
+            )}
+            <span className="sr-only">View Badges</span>
+          </Button>
         </div>
       </div>
     </div>
