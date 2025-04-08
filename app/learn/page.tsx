@@ -97,6 +97,7 @@ export default function HindiLearning() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [lastX, setLastX] = useState(0)
   const [lastY, setLastY] = useState(0)
+  const [Mistakes, setMistakes] = useState(0)
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -124,6 +125,7 @@ export default function HindiLearning() {
         body: JSON.stringify({
           email: user.user_email,
           completedLetters: completedLetterValues,
+          mistakes: Mistakes,
         }),
       });
       console.log(response);
@@ -132,6 +134,7 @@ export default function HindiLearning() {
         return false;
       }
       user.letters_completed = completedLetterValues;
+      user.mistakes = Mistakes;
       return true;
     } catch (error) {
       console.error('Error updating progress:', error);
@@ -156,6 +159,7 @@ export default function HindiLearning() {
       
       setCompletedLetters(newCompletedLetters);
       setCompletedLetterValues(newCompletedLetterValues);
+      setMistakes(user.mistakes); 
       
       // Update progress
       const completed = newCompletedLetters.filter(Boolean).length;
@@ -298,6 +302,8 @@ export default function HindiLearning() {
       return
     }
 
+    if (!user) return false
+
     setIsVerifying(true)
     setShowFeedback(false)
     
@@ -326,6 +332,7 @@ export default function HindiLearning() {
           setCompletedLetterValues(prev => [...prev, currentLetter]);
         }
       } else {
+        setMistakes(prev => prev + 1);
         const randomIndex = Math.floor(Math.random() * errorMessages.length)
         setFeedbackMessage(errorMessages[randomIndex])
       }

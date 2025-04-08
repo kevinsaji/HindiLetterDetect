@@ -6,13 +6,13 @@ const userDetailsPath = path.join(process.cwd(), "app/auth/UserDetails.json");
 console.log("s2");
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, password } = await req.json();
     const users = JSON.parse(fs.readFileSync(userDetailsPath, "utf-8"));
     console.log("s3");
     let user = users.find((u: any) => u.user_email === email);
     const currentDate = new Date().toISOString().split("T")[0];
     
-    if (user) {
+    if (user && user.user_password == password) {
       const lastLoginDate = user.last_login_date.split("T")[0];
 
       if (lastLoginDate !== currentDate) {

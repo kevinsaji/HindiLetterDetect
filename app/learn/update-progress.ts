@@ -11,6 +11,7 @@ interface User {
   last_login_date: string;
   login_streak: number;
   longest_login_streak: number;
+  mistakes: number;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,9 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
   try {
-    const { email, completedLetters } = req.body
+    const { email, completedLetters, mistakes } = req.body
 
-    if (!email || !completedLetters || !Array.isArray(completedLetters)) {
+    if (!email || !completedLetters || !Array.isArray(completedLetters) || !mistakes) {
       return res.status(400).json({ error: 'Missing or invalid required parameters' })
     }
 
@@ -38,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Update the user's completed letters
     users[userIndex].letters_completed = completedLetters
+    users[userIndex].mistakes = mistakes
 
     // Write the updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(users, null, 2))

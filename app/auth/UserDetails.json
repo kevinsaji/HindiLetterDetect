@@ -26,11 +26,13 @@
       "ऐ",
       "ओ",
       "औ",
-      "ए"
+      "ए",
+      "च"
     ],
-    "last_login_date": "2025-04-02T08:40:30.407Z",
-    "login_streak": 7,
-    "longest_login_streak": 10
+    "last_login_date": "2025-04-08T10:36:56.482Z",
+    "login_streak": 1,
+    "longest_login_streak": 10,
+    "mistakes": 6
   },
   {
     "username": "Kevin Saji Jacob",
@@ -48,18 +50,21 @@
       "व",
       "ग"
     ],
-    "last_login_date": "2025-04-02T08:42:56.578Z",
-    "login_streak": 2,
-    "longest_login_streak": 3
+    "last_login_date": "2025-04-08T10:23:40.822Z",
+    "login_streak": 1,
+    "longest_login_streak": 3,
+    "mistakes": 10
   },
   {
     "username": "Jyotsana Achal",
     "user_email": "jyotsana.achal@gmail.com",
     "user_password": "abcd1234",
     "letters_completed": [
+      "च"
     ],
-    "last_login_date": "2025-04-02T08:52:11.160Z",
-    "login_streak": 1,
-    "longest_login_streak": 1
+    "last_login_date": "2025-04-02T10:15:05.085Z",
+    "login_streak": 2,
+    "longest_login_streak": 2,
+    "mistakes": 8
   }
 ]

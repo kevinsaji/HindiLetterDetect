@@ -21,6 +21,7 @@ import {
   Zap,
   BookOpen,
   Sparkles,
+  X,
   ArrowLeft,
   type LucideIcon,
 } from "lucide-react"
@@ -161,7 +162,7 @@ export default function BadgesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card className="bg-white/90 shadow-lg border-2 border-purple-200">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium text-purple-700">Overall Progress</CardTitle>
@@ -208,7 +209,26 @@ export default function BadgesPage() {
               </div>
             </CardContent>
           </Card>
+
+          <Card className="bg-white/90 shadow-lg border-2 border-purple-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-purple-700">Mistakes</CardTitle>
+            </CardHeader>
+            <CardContent className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
+                <X className="h-8 w-8 text-red-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">
+                  {user?.mistakes}
+                </p>
+                <p className="text-sm text-muted-foreground">It's Okay, We Learn!</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+
 
         <Tabs defaultValue="all" className="mb-8">
           <TabsList className="grid w-full grid-cols-3 bg-white/80 rounded-xl p-1 shadow-md">

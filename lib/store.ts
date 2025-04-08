@@ -8,6 +8,7 @@ interface User {
   last_login_date: string;
   login_streak: number;
   longest_login_streak: number;
+  mistakes: number;
 }
 
 interface UserStore {

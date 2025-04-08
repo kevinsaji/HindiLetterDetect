@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       last_login_date: new Date().toISOString(),
       login_streak: 1,
       longest_login_streak: 1,
+      mistakes: 0,
     };
 
     users.push(newUser);
