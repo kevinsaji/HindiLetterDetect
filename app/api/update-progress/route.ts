@@ -11,13 +11,14 @@ interface User {
   last_login_date: string;
   login_streak: number;
   longest_login_streak: number;
+  mistakes: number;
 }
 
 export async function POST(req: Request) {
   try {
-    const { email, completedLetters } = await req.json();
+    const { email, completedLetters, mistakes } = await req.json();
 
-    if (!email || !completedLetters || !Array.isArray(completedLetters)) {
+    if (!email || !completedLetters || !Array.isArray(completedLetters) || !mistakes) {
       return NextResponse.json({ error: 'Missing or invalid required parameters' }, { status: 400 });
     }
 
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
 
     // Update the user's completed letters
     users[userIndex].letters_completed = completedLetters;
+    users[userIndex].mistakes = mistakes;
     // Write the updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
 
