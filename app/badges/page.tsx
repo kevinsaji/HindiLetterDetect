@@ -173,7 +173,7 @@ export default function BadgesPage() {
                   <span className="text-sm text-muted-foreground">Hindi Letters</span>
                   <span className="font-medium">{progress}%</span>
                 </div>
-                <Progress value={progress} className="h-3" />
+                  <Progress value={progress} className="h-3 bg-green-200 [&>div]:bg-green-600" />
               </div>
             </CardContent>
           </Card>

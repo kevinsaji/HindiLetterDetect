@@ -29,7 +29,7 @@
       "ए",
       "च"
     ],
-    "last_login_date": "2025-04-09T08:01:40.620Z",
+    "last_login_date": "2025-04-09T08:13:44.412Z",
     "login_streak": 2,
     "longest_login_streak": 10,
     "mistakes": 8
@@ -59,12 +59,10 @@
     "username": "Jyotsana Achal",
     "user_email": "jyotsana.achal@gmail.com",
     "user_password": "abcd1234",
-    "letters_completed": [
-      "च"
-    ],
-    "last_login_date": "2025-04-02T10:15:05.085Z",
-    "login_streak": 2,
+    "letters_completed": [],
+    "last_login_date": "2025-04-09T08:11:51.211Z",
+    "login_streak": 1,
     "longest_login_streak": 2,
-    "mistakes": 8
+    "mistakes": 12
   }
 ]

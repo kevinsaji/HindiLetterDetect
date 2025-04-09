@@ -522,7 +522,7 @@ export default function HindiLearning() {
 
         <div className="bg-white p-4 rounded-2xl shadow-lg mb-8">
           <div className="flex items-center gap-4 mb-2">
-            <Progress value={progress} className="h-3" />
+            <Progress value={progress} className="h-3 bg-green-200 [&>div]:bg-green-600" />
             <span className="text-sm font-medium">{Math.round(progress)}%</span>
           </div>
           <div className="flex gap-2 overflow-x-auto py-2">
