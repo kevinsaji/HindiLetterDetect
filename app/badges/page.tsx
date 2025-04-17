@@ -171,7 +171,7 @@ export default function BadgesPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Hindi Letters</span>
-                  <span className="font-medium">{progress}%</span>
+                  <span className="font-medium">{progress.toFixed(2)}%</span>
                 </div>
                   <Progress value={progress} className="h-3 bg-green-200 [&>div]:bg-green-600" />
               </div>
@@ -302,7 +302,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
           <div className="flex flex-col gap-1.5">
             <div className="flex justify-between text-xs">
               <span>Progress</span>
-              <span>{badge.progress}%</span>
+              <span>{badge.progress.toFixed(2)}%</span>
             </div>
             <Progress value={badge.progress} className="h-2" />
           </div>
